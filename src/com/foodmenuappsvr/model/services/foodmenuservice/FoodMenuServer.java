@@ -69,6 +69,9 @@ public class FoodMenuServer {
     private static class ClientHandler implements Runnable {
         private final Socket clientSocket;
         
+        private User user;
+        private String sessionKey;
+        
         private CreateWrapper createWrap = new CreateWrapper();
         private RetrieveWrapper retrieveWrap = new RetrieveWrapper();
         private UpdateWrapper updateWrap = new UpdateWrapper();
@@ -79,7 +82,7 @@ public class FoodMenuServer {
     	private MenuItemManager menuItemManager;
     	private DayMenuManager	dayMenuManager;
     	
-    	private User user;
+    	
   
         // Constructor
         public ClientHandler(Socket socket) {
@@ -95,7 +98,13 @@ public class FoodMenuServer {
                 ObjectOutputStream objectOutputStream =  new ObjectOutputStream(outputStream);
                 ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
                 
-                user = (User) objectInputStream.readObject();
+                UserWrapper newUser = (UserWrapper) objectInputStream.readObject();
+                
+                if(!validateAuthUser(newUser.getEmail(), newUser.getAuthToken())){
+                    objectInputStream.close();
+                    objectInputStream.close();
+    	            clientSocket.close();
+                }
                 
                 System.out.printf("User %s Logged In from %s:%s.\n", user.getEmailAddress(), clientSocket.getInetAddress().getHostAddress(), clientSocket.getPort());
                 
@@ -139,7 +148,12 @@ public class FoodMenuServer {
                 }
                 
                 System.out.printf("%s from %s:%s | Client Initiated Connection Closed.\n", user.getEmailAddress(), clientSocket.getInetAddress().getHostAddress(), clientSocket.getPort());
-                System.out.printf("User %s Logged Out\n", user.getEmailAddress());		
+                if(requestRevokeAuthUser(user.getEmailAddress())) {
+                	System.out.printf("User %s Logged Out\n", user.getEmailAddress());
+                } else {
+                	System.out.printf("User Session %s not properly closed\n", user.getEmailAddress());
+                }
+                	
                 System.out.println("Ending Thread:  "
                         + clientSocket.getInetAddress().getHostAddress() 
                         + ":" + clientSocket.getPort());
@@ -150,6 +164,56 @@ public class FoodMenuServer {
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             } 
+        }
+        
+        /**
+         * validateAuthUser is designed to connect and retrieve data the Authentication Server then disconnect
+         * This class is not designed to have an enduring connection
+         * 
+         */
+        public boolean validateAuthUser(String email, String authKey) throws UnknownHostException, IOException, ClassNotFoundException {
+    		// establish a connection by providing host and port number
+            Socket authServerSocket = new Socket("localhost", 40008);
+            // get the input stream from the connected socket
+            OutputStream authOutputStream = authServerSocket.getOutputStream();
+            InputStream authInputStream = authServerSocket.getInputStream();
+            // create a DataInputStream so we can read data from it.
+            ObjectOutputStream authObjectOutputStream =  new ObjectOutputStream(authOutputStream);
+            ObjectInputStream authObjectInputStream = new ObjectInputStream(authInputStream);
+            
+            UserWrapper userWrapper = new UserWrapper();
+            userWrapper.setRequestType(8);
+    		userWrapper.setEmail(email);
+    		userWrapper.setAuthToken(authKey);
+    		
+    		authObjectOutputStream.writeObject(userWrapper);
+    		
+    		UserWrapper authServerResponse = (UserWrapper) authObjectInputStream.readObject();
+    		
+    		this.user = authServerResponse.getUser();
+        	
+        	return true;
+        }
+        
+        public boolean requestRevokeAuthUser(String email) throws UnknownHostException, IOException, ClassNotFoundException {
+    		// establish a connection by providing host and port number
+            Socket authServerSocket = new Socket("localhost", 40008);
+            // get the input stream from the connected socket
+            OutputStream authOutputStream = authServerSocket.getOutputStream();
+            InputStream authInputStream = authServerSocket.getInputStream();
+            // create a DataInputStream so we can read data from it.
+            ObjectOutputStream authObjectOutputStream =  new ObjectOutputStream(authOutputStream);
+            ObjectInputStream authObjectInputStream = new ObjectInputStream(authInputStream);
+            
+            UserWrapper userWrapper = new UserWrapper();
+            userWrapper.setRequestType(11);
+            userWrapper.setEmail(email);
+            
+            authObjectOutputStream.writeObject(userWrapper);
+    		
+    		UserWrapper authServerResponse = (UserWrapper) authObjectInputStream.readObject();
+    		
+    		return authServerResponse.getResponse();
         }
         
         public Response create(CreateWrapper create) throws ServiceLoadException, FoodItemServiceException, MenuItemServiceException, DayMenuServiceException, UserServiceException, IOException {
