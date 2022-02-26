@@ -3397,3 +3397,8 @@ Caused by: java.lang.ClassNotFoundException: com.foodmenuclient.model.services.n
 2022-02-26 12:42:25,458 [Thread-0] INFO  com.foodmenuappsvr.model.services.daymenuservice.DayMenuSvcImpl - DayMenu 2021-10-29 successfully retrieved from database
 2022-02-26 12:42:27,638 [Thread-0] INFO  com.foodmenuappsvr.model.services.daymenuservice.DayMenuSvcImpl - DayMenu 2021-10-29 successfully retrieved from database
 2022-02-26 12:42:34,560 [Thread-0] INFO  com.foodmenuappsvr.model.services.userservice.UserSvcImpl - User zstanfill@regis.edu successfully retrieved from database
+2022-02-26 12:49:11,788 [main] INFO  com.foodmenuappsvr.model.services.foodmenuservice.FoodMenuServer - Loaded Log4J Properties from G:\My Drive\Stanfill_Files\Other_Documents\Zach\Regis University\Graduate\Classes\Programming\my_json_application\config\log4j2.properties
+2022-02-26 12:51:37,927 [main] INFO  com.foodmenuappsvr.model.services.foodmenuservice.FoodMenuServer - Loaded Log4J Properties from G:\My Drive\Stanfill_Files\Other_Documents\Zach\Regis University\Graduate\Classes\Programming\my_json_application\config\log4j2.properties
+2022-02-26 12:52:18,376 [Thread-0] INFO  com.foodmenuappsvr.model.services.foodmenuservice.FoodMenuServer - User zstanfill@regis.edu Logged In from 127.0.0.1:59659.
+
+2022-02-26 12:52:19,782 [Thread-0] INFO  com.foodmenuappsvr.model.services.daymenuservice.DayMenuSvcImpl - DayMenu 2021-10-29 successfully retrieved from database
