@@ -1,15 +1,23 @@
 package com.foodmenuappsvr.model.business.factory;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import com.foodmenuappsvr.model.business.exceptions.ServiceLoadException;
 import com.foodmenuappsvr.model.services.IService;
+import com.foodmenuappsvr.model.services.implreferenceservice.ImplReferenceService;
 
 /**
  * @author Zach Stanfill
  * Adapted from Prof. Ishmael, MSSE670, Regis University
  */
 public class ServiceFactory {
+	
+	private ImplReferenceService implReference;
 
 	public ServiceFactory() {
+		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		implReference = (ImplReferenceService)context.getBean("implReferences");
 	}
 	
 	/**
@@ -19,7 +27,7 @@ public class ServiceFactory {
 	 */
 	public IService getService(String serviceName) throws ServiceLoadException {
 		try {
-			Class<?> c = Class.forName(getImplName(serviceName));
+			Class<?> c = Class.forName(implReference.implReferenceLookup(serviceName));
 			return (IService)c.newInstance();
 		} catch (Exception e) {
 			serviceName = serviceName + " not loaded";
@@ -28,6 +36,7 @@ public class ServiceFactory {
 	}
 	
 	/**
+	 * UNUSED WITH THE IMPLEMENTATION OF SPRING APPLICATIONCONEXT
 	 * @param serviceName
 	 * @return IService Assoicated Impl Path
 	 * @throws Exception

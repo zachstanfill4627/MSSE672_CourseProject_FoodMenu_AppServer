@@ -6,6 +6,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.foodmenu.model.domain.*;
 import com.foodmenuappsvr.model.business.exceptions.ServiceLoadException;
@@ -15,6 +20,8 @@ import com.foodmenuappsvr.model.services.exceptions.DayMenuServiceException;
 import com.foodmenuappsvr.model.services.exceptions.FoodItemServiceException;
 import com.foodmenuappsvr.model.services.exceptions.MenuItemServiceException;
 import com.foodmenuappsvr.model.services.exceptions.UserServiceException;
+import com.foodmenuappsvr.model.services.logservice.LogServer;
+import com.foodmenuappsvr.model.services.networkservice.NetworkClient;
 
 /** 
  * @author Zach Stanfill
@@ -22,13 +29,37 @@ import com.foodmenuappsvr.model.services.exceptions.UserServiceException;
  */
 public class FoodMenuServer {
 
+	static Logger LOGGER = Logger.getLogger(FoodMenuServer.class);
+	
+	static {
+		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		
+		LogServer logServer = (LogServer)context.getBean("logCfg");
+		String log4j2PropFile = logServer.getPropFile("log");
+		
+		
+        if(!log4j2PropFile.equals("")) {
+         	System.setProperty("log4j.configurationFile", log4j2PropFile);
+          	LOGGER.info("Loaded Log4J Properties from " + log4j2PropFile);
+        } else {
+         	System.setProperty("log4j.configurationFile", "config\\log4j2.properties");
+         	LOGGER.error("System failed to load log4j2.properties file. Check configuration for more details");
+        }
+		
+		LOGGER.trace(String.format("Logging Level: %s", LOGGER.getLevel()));
+	}
+	
     public static void main(String[] args) {
         ServerSocket server = null;
   
         try {
   
+        	ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+    		NetworkClient appSvrNetClient = (NetworkClient)context.getBean("appSvrNetCfg");
+    		int serverPort = Integer.parseInt(appSvrNetClient.getPort("port"));
+        	
             // server is listening on port 1234
-            server = new ServerSocket(40010);
+            server = new ServerSocket(serverPort);
             server.setReuseAddress(true);
   
             // running infinite loop for getting client request
@@ -106,7 +137,7 @@ public class FoodMenuServer {
     	            clientSocket.close();
                 }
                 
-                System.out.printf("User %s Logged In from %s:%s.\n", user.getEmailAddress(), clientSocket.getInetAddress().getHostAddress(), clientSocket.getPort());
+                LOGGER.info(String.format("User %s Logged In from %s:%s.\n", user.getEmailAddress(), clientSocket.getInetAddress().getHostAddress(), clientSocket.getPort()));
                 
                 userManager = new UserManager(user);
             	foodItemManager = new FoodItemManager(user);
