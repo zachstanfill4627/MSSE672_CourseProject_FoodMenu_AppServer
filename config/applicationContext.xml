@@ -7,7 +7,6 @@
 		<property name="propFileLocation" value="G:\My Drive\Stanfill_Files\Other_Documents\Zach\Regis University\Graduate\Classes\Programming\my_json_application\config\log4j2.properties"/>
 	</bean>
 	
-	
 	<bean id="implReferences" class="com.foodmenuappsvr.model.services.implreferenceservice.ImplReferenceService">
 		<property name="IDayMenuService" value="com.foodmenuappsvr.model.services.daymenuservice.DayMenuSvcImpl"/>
 		<property name="IFoodItemService" value="com.foodmenuappsvr.model.services.fooditemservice.FoodItemSvcImpl"/>
@@ -15,14 +14,11 @@
 		<property name="IUserService" value="com.foodmenuappsvr.model.services.userservice.UserSvcImpl"/>
 	</bean>
 	
-	<!-- 
-	<bean id="jdbcCfg" class="com.myapplication.model.services.factory.ServiceFactory">
+	<bean id="jdbcCfg" class="com.foodmenuappsvr.model.services.jdbcservice.JDBCServer">
 		<property name="jdbcURL" value="jdbc:mysql://localhost/foodmenu"/>
 		<property name="jdbcUser" value="dbuser"/>
 		<property name="jdbcPassword" value="password"/>
 	</bean>
-	
-	 -->
 	 
 	<bean id="authSvrNetCfg" class="com.foodmenuappsvr.model.services.networkservice.NetworkClient">
 		<property name="networkPort" value="40008" />

@@ -11,12 +11,15 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.foodmenu.model.domain.FoodItem;
 import com.foodmenu.model.domain.MenuItem;
 import com.foodmenuappsvr.model.services.exceptions.FoodItemServiceException;
 import com.foodmenuappsvr.model.services.exceptions.MenuItemServiceException;
 import com.foodmenuappsvr.model.services.fooditemservice.FoodItemSvcImpl;
+import com.foodmenuappsvr.model.services.jdbcservice.JDBCServer;
 
 public class MenuItemSvcImpl implements IMenuItemService {
 	
@@ -29,25 +32,22 @@ public class MenuItemSvcImpl implements IMenuItemService {
 	public MenuItemSvcImpl()  {
 		LOGGER.trace("MenuItemSvcImpl Default Constructor Called");
 		
-		try (InputStream input = new FileInputStream(propertiesFile)) {
-            Properties prop = new Properties();
-            prop.load(input);
-            if(prop.getProperty("dbconnect.string") != null){
-            	connString = prop.getProperty("dbconnect.string");
-            	LOGGER.debug(String.format("Database Connection String = %s", connString));
-            } else throw new Exception("dbconnect.string not present in properties file"); 
-            if(prop.getProperty("dbconnect.string") != null){
-            	dbUsername = prop.getProperty("dbconnect.user");
-            	LOGGER.debug(String.format("Database Username = %s", dbUsername));
-            } else throw new Exception("dbconnect.user not present in properties file");
-            if(prop.getProperty("dbconnect.string") != null){
-            	dbPassword = prop.getProperty("dbconnect.password");
-            	LOGGER.debug(String.format("Database Password = %s", dbPassword));
-            } else throw new Exception("dbconnect.password not present in properties file");
-            
-            LOGGER.trace("Successfully read database connection properties from properties files");
+		try { 
+			ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+			JDBCServer jdbcServer = (JDBCServer)context.getBean("jdbcCfg");
+			
+			connString = jdbcServer.getJdbcURL();
+			LOGGER.debug(String.format("Database Connection String = %s", connString));
+			
+			dbUsername = jdbcServer.getJdbcUser();
+			LOGGER.debug(String.format("Database Username = %s", dbUsername));
+			
+			dbPassword = jdbcServer.getJdbcPassword();
+			LOGGER.debug(String.format("Database Password = %s", dbPassword));
+			
+	        LOGGER.trace("Successfully read database connection applicationContext.xml from properties files");
 		} catch (Exception e) {
-			System.err.println("Error in reading property file database connection values, Exiting!");
+			System.err.println("Error in reading applicationContext.xml file database connection values, Exiting!");
 			System.err.println(e);
 			LOGGER.fatal(e);
 			System.exit(1);

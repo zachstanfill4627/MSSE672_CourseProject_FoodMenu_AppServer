@@ -6,62 +6,45 @@ package com.foodmenuappsvr.model.services.jdbcservice;
  * Adapted from Prof. Ishmael, MSSE672, Regis University -- Example EPedigreeThreadedServers Application
  */
 public class JDBCServer {
+	private String jdbcURL;
+	private String jdbcUser;
+	private String jdbcPassword;
 	
-	  private  String jDBCDriver;
-	  private  String jDBCUrl;
-	  private  String jDBCUser;
-	  private  String jDBCPassword;
-	    
-	    public void setJDBCDriver(String jDBCDriver ){
-		 
-		 this.jDBCDriver = jDBCDriver;
-		 	 
-	 } // end of setJDBCDriver
-	    
-	    public void setJDBCUrl(String jDBCUrl){
-		 
-		 this.jDBCUrl = jDBCUrl;
-		 	 
-	 } // end of setJDBCUrl
-	    
-	    public void setJDBCUser(String jDBCUser){
-		 
-		 this.jDBCUser = jDBCUser;
-		 	 
-	 } // end of setJDBCUser
-	    
-	    public void setJDBCPassword(String jDBCPassword){
-		 
-		 this.jDBCPassword = jDBCPassword;
-		 	 
-	 } // end of setJDBCPassword
-	    
-	    public String getJDBCDriver(String driver){
-		 
-		 driver = jDBCDriver;
-		 	 
-		 return driver;
-	 } // end of getJDBCDriver
-
-	public String getJDBCUrl(String url){
-		 
-		 url = jDBCUrl;
-		 	 
-		 return url;
-	 } // end of getJDBCUrl
-
-	public String getJDBCUser(String user){
-		 
-		 user = jDBCUser;
-		 	 
-		 return user;
-	 } // end of getJDBCUser
-
-	public String getJDBCPassword(String password){
-		 
-		 password = jDBCPassword;
-		 	 
-		 return password;
-	 } // end of getJDBCPassword
+	/**
+	 * @return the jdbcURL
+	 */
+	public String getJdbcURL() {
+		return jdbcURL;
+	}
+	/**
+	 * @param jdbcURL the jdbcURL to set
+	 */
+	public void setJdbcURL(String jdbcURL) {
+		this.jdbcURL = jdbcURL;
+	}
+	/**
+	 * @return the jdbcUser
+	 */
+	public String getJdbcUser() {
+		return jdbcUser;
+	}
+	/**
+	 * @param jdbcUser the jdbcUser to set
+	 */
+	public void setJdbcUser(String jdbcUser) {
+		this.jdbcUser = jdbcUser;
+	}
+	/**
+	 * @return the jdbcPassword
+	 */
+	public String getJdbcPassword() {
+		return jdbcPassword;
+	}
+	/**
+	 * @param jdbcPassword the jdbcPassword to set
+	 */
+	public void setJdbcPassword(String jdbcPassword) {
+		this.jdbcPassword = jdbcPassword;
+	}
 
 } // end of JDBCServer
